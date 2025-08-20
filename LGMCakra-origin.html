@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Life Grand Map — Editor PK26</title>
+
+  <!-- Bootstrap & Font -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="LGMCakra-origin.css" />
+</head>
+<body>
+  <div class="container shell py-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="m-0">Life Grand Map — Editor PK264</h5>
+      <div></div>
+    </div>
+
+    <div class="row g-4 three-col">
+      <!-- LEFT: INPUTS (paling besar) -->
+      <div class="col-xl-5 col-lg-5 col-md-12">
+
+        <div class="card sticky-top">
+          <div class="card-body">
+            <!-- Header & Instruksi Dinamis -->
+            <h5 class="mb-2">
+              <span id="pageHeader"></span>
+            </h5>
+            <div id="pageInstruction" class="mini mb-3"></div>
+
+            <!-- Kontrol FLOW (muncul bila page tidak dikunci) -->
+            <div id="flowControls" class="row g-2 mb-2 d-none">
+              <div class="col-6">
+                <label class="form-label mini">Kolom</label>
+                <input id="fc_cols" type="number" min="1" max="3" step="1" class="form-control" value="2" />
+              </div>
+              <div class="col-6">
+                <label class="form-label mini">Gap (%)</label>
+                <input id="fc_gap" type="number" step="0.1" class="form-control" value="2.5" />
+              </div>
+              <div class="col-6">
+                <label class="form-label mini">Left (%)</label>
+                <input id="fc_left" type="number" step="0.1" class="form-control" value="11" />
+              </div>
+              <div class="col-6">
+                <label class="form-label mini">Top (%)</label>
+                <input id="fc_top" type="number" step="0.1" class="form-control" value="34" />
+              </div>
+              <div class="col-6">
+                <label class="form-label mini">Width (%)</label>
+                <input id="fc_width" type="number" step="0.1" class="form-control" value="78" />
+              </div>
+              <div class="col-6">
+                <label class="form-label mini">Pad X (%)</label>
+                <input id="fc_padx" type="number" step="0.1" class="form-control" value="2" />
+              </div>
+              <div class="col-6">
+                <label class="form-label mini">Pad Y (%)</label>
+                <input id="fc_pady" type="number" step="0.1" class="form-control" value="2" />
+              </div>
+            </div>
+
+            <!-- Input dinamis per box / skills builder -->
+            <div id="inputsArea"></div>
+          </div>
+        </div>
+      </div>
+
+     <!-- MIDDLE: PREVIEW -->
+<div class="col-12 col-md-4 col-lg-4 col-xl-4">
+  <div class="card">
+    <div class="card-body">
+      <div class="preview-scroller">
+        <div class="stage-container">
+          <div id="stage" class="stage stage--in-card">
+            <img id="bgImg" class="bg" alt="Background halaman" />
+            <!-- overlay diinject JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+      <!-- RIGHT: TOOLS / DOWNLOAD -->
+      <div class="col-xl-3 col-lg-3 col-md-12">
+
+        <div class="card sticky-top">
+          <div class="card-body">
+
+            <!-- Pager angka (tanpa Prev/Next) -->
+            <div class="mb-3">
+              <ul id="pager" class="nav nav-pills gap-2 flex-wrap mb-0"></ul>
+            </div>
+
+            <div class="d-flex flex-column gap-3">
+              <div>
+                <button id="save" class="btn btn-outline-secondary w-100">Simpan (Local)</button>
+                <div class="mini text-muted mt-1">
+                  Simpan progres di browser untuk dilanjutkan nanti.
+                </div>
+              </div>
+
+              <div>
+                <button id="export" class="btn btn-primary w-100">Download Ini</button>
+                <div class="mini text-muted mt-1">
+                  Unduh halaman yang aktif ini sebagai satu gambar PNG.
+                </div>
+              </div>
+
+              <div>
+                <button id="exportAll" class="btn btn-accent text-white w-100">Download Semua</button>
+                <div class="mini text-muted mt-1">
+                  Unduh semua halaman sekaligus dalam satu file ZIP.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div> <!-- .row -->
+  </div> <!-- .container -->
+
+  <!-- Export libs -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
+  <!-- Script utama -->
+  <script src="LGMCakra-origin.js"></script>
+</body>
+</html>

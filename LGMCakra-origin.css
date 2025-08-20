@@ -1,0 +1,320 @@
+/* ===========================
+   LGMCakra — Editor 7 Halaman
+   (single preview only)
+   =========================== */
+
+:root{
+  --primary:#1961AE; --secondary:#E4E6EF;
+  --warning:#FFA800; --danger:#F64E60;
+
+  --white:#fff; --gray:#7E8299; --gray-dark:#3F4254;
+  --panel-bg:#fff; --panel-border:#e9ecef;
+  --shadow-soft:0 8px 24px rgba(0,0,0,.06);
+  --radius:14px;
+
+  --bg-body:#F3F6F9; --text-body:var(--gray-dark);
+}
+
+*{ box-sizing:border-box }
+html,body{ height:100% }
+body{
+  margin:0; background:var(--bg-body); color:var(--text-body);
+  font-family:'Inter',system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+}
+
+/* ===== Layout & Components ===== */
+.shell{ max-width:1200px }
+.sticky-top{ top:1rem }
+.mini{ font-size:.82rem; color:var(--gray) }
+
+.card{
+  border:1px solid var(--panel-border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-soft);
+  background:var(--panel-bg);
+}
+.card .card-body{ padding:16px }
+
+.nav-pills .nav-link{ border-radius:999px }
+.nav-pills .nav-link.active{ background:var(--primary) }
+.btn-primary{ background:var(--primary); border-color:var(--primary) }
+.btn-primary:hover{ filter:brightness(.95) }
+.btn-accent{ background:#2b6fff; border-color:#2b6fff }
+
+/* ===== Form kiri ===== */
+#inputsArea .form-label{ font-weight:600; font-size:.9rem }
+#inputsArea .form-control{
+  font-size:.95rem; line-height:1.25; color:var(--text-body);
+  border:1px solid var(--secondary); border-radius:12px; background:var(--panel-bg);
+}
+#inputsArea .mb-3{ margin-bottom:1rem!important }
+
+/* ================= Preview (Single Stage) =================
+   - Fluid: width 100% (dibatasi max 1080px)
+   - Rasio tetap 1080:1350
+   ========================================================= */
+.stage-wrap{
+  display:grid;
+  gap:18px;
+  justify-items:center;
+}
+.stage{
+  position:relative;
+  width:100%;
+  max-width:1080px;
+  aspect-ratio:1080/1350;
+  height:auto;
+  background:#fff;
+  border-radius:12px;
+  box-shadow:var(--shadow-soft);
+  overflow:hidden;
+}
+.stage>img.bg{
+  position:absolute; inset:0;
+  width:100%; height:100%; object-fit:cover;
+}
+.stage svg{ width:100%; height:100%; display:block }
+/* Stage di dalam card: hilangkan shadow di stage, biar shadow dari card saja */
+.stage--in-card{
+  box-shadow: none;
+  border-radius: 12px;   /* tetap rounded di dalam card */
+  background: #fff;      /* pastikan putih bersih */
+}
+
+/* Saat export: tetap kotak penuh walau ada card */
+.stage--in-card.exporting{
+  border-radius: 0 !important;
+  overflow: visible !important;
+  box-shadow: none !important;
+}
+
+/* Saat export (hilangkan efek visual tepi) */
+.stage.exporting{
+  border-radius:0 !important;
+  overflow:visible !important;
+  box-shadow:none !important;
+}
+
+/* Container untuk stage (tanpa dual) */
+.stages{ display:block }
+#stage2Wrap{ display:none!important } /* guard jika elemen masih ada */
+
+/* ================================
+   BOX STYLE (Wrapper umum)
+   ================================= */
+.box {
+  --body-pad-x: 10px;
+  --body-pad-y: 10px;
+
+  /* default (override per box bila perlu) */
+  --title-bg:    #2e6368;
+  --title-color: #daa520;
+  --body-bg:     #f6e6c5;
+
+  color: var(--text-body);
+  box-shadow: var(--shadow, var(--shadow-soft, none));
+}
+
+/* ===== BOX TITLE ===== */
+.box-title {
+  display:inline-block;
+  margin-bottom:0;
+  padding:.3rem .5rem;
+  line-height:.8;
+  background-color:var(--title-bg);
+  color:var(--title-color);
+  border-radius:0 12px 0 0;
+  font-family:'Raleway', sans-serif;
+  font-weight:700;
+  font-size:10px;
+}
+
+/* ===== BOX BODY ===== */
+.box-body {
+  margin:0;
+  padding:var(--body-pad-y) var(--body-pad-x);
+  border:var(--body-border, none);
+  border-radius:0 15px 0 15px;
+  background-color:var(--body-bg);
+  white-space:pre-wrap;
+  word-break:break-word;
+  hyphens:auto;
+  font-family:'Raleway', sans-serif;
+  font-weight:400;
+  font-size:7px;
+  text-align:justify;
+}
+
+/* ABS overlay */
+.overlay-abs{ position:absolute }
+
+/* FLOW (grid dinamis dalam stage) */
+.flow-wrap{
+  position:absolute;
+  display:grid;
+  grid-template-columns:repeat(var(--cols,2),1fr);
+  grid-auto-rows:auto;
+  gap:var(--gap-px);
+  padding:var(--padY-px) var(--padX-px);
+  width:var(--w-px);
+  left:var(--left-px);
+  top:var(--top-px);
+}
+.flow-wrap .box{ height:auto }
+
+/* ===== Pills (daftar skill per model) ===== */
+.pillbox{ 
+  display:flex; 
+  flex-wrap:wrap; 
+  gap:8px; 
+  justify-content:flex-start;   /* <— rata kiri */
+}
+.pill{
+  padding:.45rem .75rem; 
+  border-radius:999px; 
+  border:1px solid var(--panel-border);
+  background:#f6f8fb; 
+  color:#111827; 
+  font-weight:700; 
+  font-size:.85rem; 
+  cursor:pointer;
+  transition:background .15s, border-color .15s, color .15s;
+}
+.pill:hover{ background:#eef2f8 }
+.pill.active{ background:#111827; color:#fff; border-color:#111827 }
+
+
+/* ===== Skills Builder Cards ===== */
+.sb-card{
+  border:1px solid var(--panel-border);
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:12px;
+  background:var(--panel-bg);
+  position:relative;
+}
+.sb-card .sb-ctr{
+  display:flex; gap:6px; flex-wrap:wrap;
+  position:absolute; right:12px; top:12px;
+}
+.sb-wcount{
+  font-size:.8rem; margin-top:6px; color:var(--gray);
+}
+.sb-wcount.ok{ color:#059669 }
+.sb-wcount.warn{ color:#b45309 }
+.sb-wcount.bad{ color:#b91c1c }
+
+/* ===== Util & Toast ===== */
+.hidden{ display:none!important }
+.text-danger{ color:var(--danger)!important }
+.text-primary{ color:var(--primary)!important }
+.text-muted{ color:var(--gray)!important }
+
+.toast{
+  position:fixed; left:50%; bottom:24px; transform:translateX(-50%);
+  background:#fff; color:var(--text-body); border:1px solid var(--panel-border);
+  box-shadow:var(--shadow-soft); padding:10px 14px; border-radius:12px;
+  opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; z-index:1000;
+}
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(-4px) }
+.toast.error{ border-color:#ffd1d6; background:#fff5f6; color:#8a1020 }
+.toast.ok{ border-color:#cde8e4; background:#f2fffd; color:#0c5a4e }
+
+/* ===== Dark mode ===== */
+html.dark{
+  --bg-body:#0e1116; --text-body:#e9eef6;
+  --panel-bg:#121723; --panel-border:rgba(255,255,255,.10);
+  color-scheme:dark;
+}
+html.dark .card{ border-color:var(--panel-border) }
+html.dark .stage{ background:#0f1420 }
+html.dark .box{ --title-bg:#2b6fff }
+
+/* (hindari bentrok layout alternatif) */
+.twibbon-container-3{ all:unset }
+/* Grid tiga kolom: spasi yang pas di desktop */
+@media (min-width: 1200px){
+  .three-col > [class*="col-"] { display: flex; }
+  .three-col .card { width: 100%; }
+}
+
+/* Stage di dalam card: biar shadow utama dari card saja */
+.stage--in-card{
+  box-shadow: none;
+  border-radius: 12px;
+  background: #fff;
+}
+
+/* Saat export tetap kotak penuh */
+.stage--in-card.exporting{
+  border-radius: 0 !important;
+  overflow: visible !important;
+  box-shadow: none !important;
+}
+/* Tiga kolom: tinggi sejajar */
+.three-col > [class*="col-"] {
+  display: flex;
+  flex-direction: column;
+}
+.three-col .card {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+.three-col .card-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+/* --- Styling untuk textarea input konten --- */
+#inputsArea textarea {
+  min-height: 120px;       /* lebih tinggi default */
+  resize: vertical;        /* user boleh tarik ke bawah kalau mau */
+  font-size: 15px;         /* agak besar biar nyaman */
+  line-height: 1.5;        /* spasi antarbaris enak dibaca */
+  padding: 10px 12px;      /* ruang dalam */
+}
+
+/* Biar penuh lebarnya di layar laptop */
+@media (min-width: 992px) {   /* breakpoint laptop */
+  #inputsArea textarea {
+    width: 100%;             /* isi penuh card kiri */
+    min-height: 160px;       /* lebih tinggi default di layar besar */
+  }
+}
+
+/* Opsional: card kiri biar fleksibel tinggi */
+#inputsArea .form-control {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.stage-wrap {
+  display: flex;
+  justify-content: center;
+}
+.stage {
+  width: 100%;
+  max-width: 1080px; /* tidak lebih besar dari ini */
+}
+/* bungkus untuk scrolling horizontal kalau layar sempit */
+.preview-scroller {
+  overflow-x: auto;
+}
+
+/* center-kan stage dan batasi lebar maksimum */
+.stage-container {
+  display: flex;
+  justify-content: center;
+}
+
+.stage {
+  width: 100%;
+  max-width: 1080px;      /* kunci maksimum: tidak pernah >1080 */
+  aspect-ratio: 1080 / 1350;
+}
+
+/* opsional: di layar sangat lebar, tetap center & tidak membesar */
+@media (min-width: 1200px) {
+  .stage { width: 1080px; }  /* bikin k = 1 di desktop */
+}
