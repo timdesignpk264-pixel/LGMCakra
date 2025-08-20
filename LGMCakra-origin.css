@@ -267,3 +267,34 @@ body{
   .stage{ box-shadow:none; border-radius:0; }
   .sticky-top{ position:static !important; }
 }
+/* ===== Uniform spacing untuk SEMUA halaman ===== */
+:root{
+  --flow-gap: 14px; /* ubah 12–16px sesuai selera */
+}
+.flow-wrap{
+  gap: var(--flow-gap, var(--gap-px)); /* pakai global gap */
+}
+.flow-wrap .box{ margin:0; }  /* jangan ada margin liar dari anak */
+.box-body{ margin:0; }        /* hilangkan jeda ekstra antar box */
+
+/* ===== Rapatkan title ke body (tanpa jarak) ===== */
+.box-title{
+  margin-bottom: 0 !important;     /* pastikan nol */
+  align-self: flex-start;           /* biar tidak stretch full */
+}
+.box-body{
+  /* kalau masih terasa renggang, kecilkan sedikit padding atas */
+  padding-top: calc(var(--body-pad-y) - 2px);
+}
+
+/* ===== Font responsif (opsional, biar tidak terlalu besar) ===== */
+.box-title{
+  /* dari 10–14px dynamic; ganti angka tengah kalau perlu */
+  font-size: clamp(10px, 0.95vw, 14px);
+  line-height: 1; /* hindari clipping di label kecil */
+}
+.box-body{
+  font-size: clamp(12px, 1.05vw, 14px);
+  line-height: 1.4;
+}
+
