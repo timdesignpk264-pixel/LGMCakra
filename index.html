@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Life Grand Map — Editor PK26</title>
+  <title>Editor 7 Halaman — Final</title>
 
   <!-- Bootstrap & Font -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -15,25 +15,25 @@
 <body>
   <div class="container shell py-4">
 
-    <!-- Header -->
+    <!-- NAVIGASI -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h5 class="m-0">Life Grand Map — Editor PK264</h5>
-      <div></div>
+      <ul id="pager" class="nav nav-pills gap-2 flex-wrap"></ul>
+      <div class="d-flex gap-2">
+        <button id="prev" class="btn btn-outline-primary">Prev</button>
+        <button id="next" class="btn btn-outline-primary">Next</button>
+      </div>
     </div>
 
-    <div class="row g-4 three-col">
-      <!-- LEFT: INPUTS (paling besar) -->
-      <div class="col-xl-5 col-lg-5 col-md-12">
-
+    <div class="row g-4">
+      <!-- PANEL FORM -->
+      <div class="col-lg-4">
         <div class="card sticky-top">
           <div class="card-body">
-            <!-- Header & Instruksi Dinamis -->
             <h5 class="mb-2">
-              <span id="pageHeader"></span>
+              Form Halaman <span id="labelPg">1</span>/<span id="totalPg">7</span>
             </h5>
-            <div id="pageInstruction" class="mini mb-3"></div>
 
-            <!-- Kontrol FLOW (muncul bila page tidak dikunci) -->
+            <!-- Kontrol FLOW (muncul hanya untuk flow yang tidak lock) -->
             <div id="flowControls" class="row g-2 mb-2 d-none">
               <div class="col-6">
                 <label class="form-label mini">Kolom</label>
@@ -65,68 +65,29 @@
               </div>
             </div>
 
-            <!-- Input dinamis per box / skills builder -->
+            <!-- Input dinamis per box -->
             <div id="inputsArea"></div>
+
+            <!-- Actions -->
+            <div class="d-grid gap-2 mt-3">
+              <button id="save" class="btn btn-outline-secondary">Simpan (Local)</button>
+              <button id="export" class="btn btn-primary">Download PNG (Halaman Ini)</button>
+              <button id="exportAll" class="btn btn-accent text-white">Download Semua (ZIP)</button>
+            </div>
+            <div class="mini mt-3">Kontrol <b>FLOW</b> hanya muncul jika halaman flow-nya tidak dikunci.</div>
           </div>
         </div>
       </div>
 
-     <!-- MIDDLE: PREVIEW -->
-<div class="col-12 col-md-4 col-lg-4 col-xl-4">
-  <div class="card">
-    <div class="card-body">
-      <div class="preview-scroller">
-        <div class="stage-container">
-          <div id="stage" class="stage stage--in-card">
-            <img id="bgImg" class="bg" alt="Background halaman" />
-            <!-- overlay diinject JS -->
-          </div>
+      <!-- STAGE PREVIEW -->
+      <div class="col-lg-8">
+        <div id="stage" class="stage">
+          <img id="bgImg" class="bg" alt="Background halaman" />
+          <!-- Overlay dibuat via JS -->
         </div>
       </div>
     </div>
   </div>
-</div>
-
-
-      <!-- RIGHT: TOOLS / DOWNLOAD -->
-      <div class="col-xl-3 col-lg-3 col-md-12">
-
-        <div class="card sticky-top">
-          <div class="card-body">
-
-            <!-- Pager angka (tanpa Prev/Next) -->
-            <div class="mb-3">
-              <ul id="pager" class="nav nav-pills gap-2 flex-wrap mb-0"></ul>
-            </div>
-
-            <div class="d-flex flex-column gap-3">
-              <div>
-                <button id="save" class="btn btn-outline-secondary w-100">Simpan (Local)</button>
-                <div class="mini text-muted mt-1">
-                  Simpan progres di browser untuk dilanjutkan nanti.
-                </div>
-              </div>
-
-              <div>
-                <button id="export" class="btn btn-primary w-100">Download Ini</button>
-                <div class="mini text-muted mt-1">
-                  Unduh halaman yang aktif ini sebagai satu gambar PNG.
-                </div>
-              </div>
-
-              <div>
-                <button id="exportAll" class="btn btn-accent text-white w-100">Download Semua</button>
-                <div class="mini text-muted mt-1">
-                  Unduh semua halaman sekaligus dalam satu file ZIP.
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </div> <!-- .row -->
-  </div> <!-- .container -->
 
   <!-- Export libs -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -137,4 +98,3 @@
   <script src="LGMCakra-origin.js"></script>
 </body>
 </html>
-
