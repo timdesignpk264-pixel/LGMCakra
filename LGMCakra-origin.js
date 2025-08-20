@@ -1,5 +1,6 @@
 /* =========================================================
    LGMCakra — Editor 7 Halaman (Final, BG Terkunci PNG)
+   (Revisi: Skills Builder hanya di Page 1, copywriting UI)
    ========================================================= */
 "use strict";
 
@@ -32,10 +33,9 @@ function autoSizeTA(el){ el.style.height='auto'; el.style.height = el.scrollHeig
 
 /* ---------- Palet warna (override via style per halaman) ---------- */
 const COLOR = {
-  titleDefault:  '#2e6368', // deep teal (backup saja)
-  titleText:     '#daa520', // goldenrod (backup saja)
-  bodyDefault:   '#f6e6c5', // beige (backup saja)
-
+  titleDefault:  '#2e6368', // deep teal (backup)
+  titleText:     '#daa520', // goldenrod (backup)
+  bodyDefault:   '#f6e6c5', // beige (backup)
   titleMulberry: '#61313e', // untuk Life Grand Map
   titleTextGold: '#f7c64b', // teks emas
   bodySelf:      '#e8c0b3', // body khusus halaman Self
@@ -77,10 +77,10 @@ const PAGES = [
       lock:true, anchor:{ mode:'manual' }
     },
     boxes:[
-      { id:"p1a", label:"Resilience & Agility", fs:20, lh:1.35, val:"", style:{ bodyBg: COLOR.bodySelf } },
-      { id:"p1b", label:"Creativity & Innovation", fs:20, lh:1.35, val:"", style:{ bodyBg: COLOR.bodySelf } },
-      { id:"p1c", label:"Analytical & Critical Thinking", fs:20, lh:1.35, val:"", style:{ bodyBg: COLOR.bodySelf } },
-      { id:"p1d", label:"Curiosity & Lifelong Learning", fs:20, lh:1.35, val:"", style:{ bodyBg: COLOR.bodySelf } },
+      { id:"p1a", label:"Skill 1", fs:20, lh:1.35, val:"", style:{ bodyBg: COLOR.bodySelf } },
+      { id:"p1b", label:"Skill 2", fs:20, lh:1.35, val:"", style:{ bodyBg: COLOR.bodySelf } },
+      { id:"p1c", label:"Skill 3", fs:20, lh:1.35, val:"", style:{ bodyBg: COLOR.bodySelf } },
+      { id:"p1d", label:"Skill 4", fs:20, lh:1.35, val:"", style:{ bodyBg: COLOR.bodySelf } },
     ]
   },
 
@@ -156,6 +156,18 @@ const PAGES = [
   { name:"CAKRA NAWASENA — Cover", type:'abs', bg: FRAME[7], boxes:[] },
 ];
 
+/* ---------- Instruksi per halaman (copywriting) ---------- */
+const PAGE_INSTR = [
+  "Langkah 1 dari 7: Identifikasi & Deskripsi Potensi Diri. Pilih hingga 8 keahlian pada daftar. Isi deskripsi tiap keahlian. Sistem otomatis membuat halaman lanjutan jika Anda memilih lebih dari 4 keahlian.",
+  "Langkah 1 dari 7 (Lanjutan): Silakan lanjutkan untuk mengisi deskripsi keahlian berikutnya.",
+  "Langkah 2 dari 7: Rencana Studi & Akademik (S2). Uraikan rencana studi dan target akademik untuk empat semester pertama.",
+  "Langkah 3 dari 7: Rencana Studi & Akademik (S3). Lanjutkan pemaparan untuk empat semester terakhir.",
+  "Langkah 4 dari 7: Peta Jalan Hidup (Jangka Menengah). Tuliskan visi & rencana konkret 5–10 tahun ke depan.",
+  "Langkah 5 dari 7: Peta Jalan Hidup (Jangka Panjang). Proyeksikan impian dan rencana besar 10 tahun ke atas.",
+  "Langkah 6 dari 7: Rencana Kontribusi & Tujuan Utama. Rangkum rencana kontribusi serta tujuan besar pribadi.",
+  "Langkah 7 dari 7: Halaman Sampul (Cover). Tidak ada isian; periksa kembali halaman sebelumnya atau unduh hasilnya."
+];
+
 /* ---------- Pager ---------- */
 function buildPager(){
   pager.innerHTML = '';
@@ -169,10 +181,21 @@ function buildPager(){
   if (totalPg) totalPg.textContent = PAGES.length;
 }
 
+/* ---------- Show/Hide Skills Builder hanya di Halaman 1 ---------- */
+function toggleSkillsBuilder(pageIndex){
+  const sb = document.getElementById('skillsBuilder');
+  if (!sb) return;
+  sb.classList.toggle('d-none', pageIndex !== 0); // tampil hanya index 0
+}
+
 /* ---------- Render ---------- */
 function renderPage(i){
   cur = i;
   if (labelPg) labelPg.textContent = i+1;
+
+  // Set instruksi per halaman
+  const inst = document.getElementById('pageInstruction');
+  if (inst) inst.textContent = PAGE_INSTR[i] || "";
 
   // BG dari definisi PAGES + fallback
   const src = PAGES[i].bg || '';
@@ -333,6 +356,9 @@ function renderPage(i){
     a.classList.toggle('active', ix===i);
     a.classList.toggle('text-white', ix===i);
   });
+
+  // tampilkan/ sembunyikan Skills Builder
+  toggleSkillsBuilder(i);
 }
 
 /* ---------- Kontrol FLOW (debounce) ---------- */
@@ -442,3 +468,315 @@ window.addEventListener('DOMContentLoaded', ()=>{
   buildPager();
   renderPage(0);
 });
+
+/* =====================================================================
+   Skills Builder — Halaman 1 (Self Potential) — Drop-in Module
+   - Membangun UI secara otomatis di panel kiri (HTML sudah menyediakan host)
+   - Pilih model → pilih hingga 8 skill → tulis narasi tiap skill
+   - 4 pertama → Page 1; sisanya → disisipkan jadi "Self Potential — Continued"
+   ===================================================================== */
+(function(){
+  /* ---------- Library Model → Skill list ---------- */
+  const SKILL_LIBRARY = {
+    "WEF – Future Skills": [
+      "Analytical & Critical Thinking","Creativity & Innovation","Leadership & Social Influence",
+      "Technology Literacy & AI","Resilience & Agility","Emotional Intelligence & Empathy",
+      "Curiosity & Lifelong Learning","Service Orientation","Talent Management","Motivation & Self-Awareness"
+    ],
+    "P21 – 21st Century Skills (4Cs)": [
+      "Critical Thinking","Creativity","Collaboration","Communication","Information & Media Literacy","Initiative & Self-Direction"
+    ],
+    "EU – Key Competences": [
+      "Literacy & Multilingual","Digital Competence","Personal & Social Learning","Civic Competence",
+      "Entrepreneurship Competence","Cultural Awareness & Expression","STEM Competence"
+    ],
+    "Corporate – Classic": [
+      "Strategic Thinking","Results Orientation","Stakeholder Influence","Team Leadership & Coaching",
+      "Customer Focus","Change Management","Emotional Intelligence"
+    ],
+    "Katz – Skills Trilogy": [
+      "Technical (Hard) Skills","Human (Interpersonal) Skills","Conceptual (Big-Picture) Skills"
+    ]
+  };
+
+  /* ---------- State ---------- */
+  let picked = [];                         // [{ title, text }]
+  let skillsModel = Object.keys(SKILL_LIBRARY)[0]; // default model pertama
+
+  /* ---------- Guard: FRAME/withBase tersedia? ---------- */
+  try{
+    if (typeof FRAME === 'object' && typeof withBase === 'function') {
+      if (!FRAME['1_EXTRA']) FRAME['1_EXTRA'] = withBase('frame-02-extra.png');
+    }
+  }catch(_e){ /* abaikan */ }
+
+  /* ---------- Refs HTML yang sudah ada ---------- */
+  let skillsBuilder = document.getElementById('skillsBuilder');
+  let modelSelect  = document.getElementById('modelSelect');
+  let skillOptions = document.getElementById('skillOptions');
+  let skillsForm   = document.getElementById('skillsForm');
+
+  /* ---------- CSS ringan (agar mandiri) ---------- */
+  (function injectCSS(){
+    if (document.getElementById('sb-inline-style')) return;
+    const css = `
+      #skillsBuilder .form-label{font-weight:700;margin-bottom:.25rem}
+      #skillsBuilder .text-muted{opacity:.85}
+      #skillsBuilder #modelSelect.form-select{
+        border-radius:10px;border-color:var(--panel-border,#e9ecef);background:#fff;
+        padding-top:.4rem;padding-bottom:.4rem
+      }
+      #skillsBuilder #modelSelect:focus{
+        box-shadow:0 0 0 .25rem rgba(25,97,174,.15);border-color:rgba(25,97,174,.35);outline:0
+      }
+      #skillsBuilder #skillOptions{display:flex;flex-wrap:wrap;gap:.5rem}
+      #skillsBuilder #skillOptions .pill{
+        display:inline-block;padding:.38rem .66rem;border:1px solid var(--secondary,#E4E6EF);
+        border-radius:999px;background:#fff;cursor:pointer;user-select:none;font-size:.86rem;line-height:1;
+        transition:background .15s ease,color .15s ease,border-color .15s ease,transform .06s ease
+      }
+      #skillsBuilder #skillOptions .pill:hover{border-color:rgba(0,0,0,.12);transform:translateY(-1px)}
+      #skillsBuilder #skillOptions .pill:active{transform:translateY(0)}
+      #skillsBuilder #skillOptions .pill.active{
+        background:var(--primary,#1961AE);color:#fff;border-color:var(--primary,#1961AE)
+      }
+      #skillsBuilder .sb-card{
+        border:1px solid var(--panel-border,#e9ecef);border-radius:12px;padding:.9rem;background:#fff;
+        box-shadow:0 8px 24px rgba(0,0,0,.06);margin-bottom:.8rem
+      }
+      #skillsBuilder .sb-wcount{font-size:.85rem;opacity:.9}
+      #skillsBuilder .sb-wcount.ok{color:#198754}
+      #skillsBuilder .sb-wcount.warn{color:#fd7e14}
+      #skillsBuilder .sb-wcount.bad{color:#dc3545}
+      #skillsBuilder .sb-ctr .btn{margin-right:.25rem}
+      @media (max-width:576px){
+        #skillsBuilder #skillOptions{gap:.4rem}
+        #skillsBuilder #skillOptions .pill{font-size:.82rem;padding:.34rem .58rem}
+      }
+    `;
+    const style = document.createElement('style');
+    style.id = 'sb-inline-style';
+    style.textContent = css;
+    document.head.appendChild(style);
+  })();
+
+  /* =====================================================
+     RENDERERS (UI)
+     ===================================================== */
+  function renderModelSelect(){
+    if (!modelSelect) return;
+    modelSelect.innerHTML = Object.keys(SKILL_LIBRARY)
+      .map(m => `<option value="${m}">${m}</option>`).join('');
+    modelSelect.value = skillsModel;
+  }
+
+  function renderPills(){
+    if (!skillOptions) return;
+    const all = SKILL_LIBRARY[skillsModel] || [];
+    const sel = new Set(picked.map(p=>p.title));
+    skillOptions.innerHTML = all.map(name => {
+      const active = sel.has(name) ? 'active' : '';
+      return `<button type="button" class="pill ${active}" data-skill="${encodeURIComponent(name)}">${name}</button>`;
+    }).join('');
+  }
+
+  // Helpers untuk word count & kelas
+  function wordCount(text){
+    return (text||'').trim().split(/\s+/).filter(Boolean).length;
+  }
+  function wcClass(n){
+    if (!n) return '';
+    if (n < 50) return 'bad';
+    if (n <= 150) return 'ok';
+    if (n <= 200) return 'warn';
+    return 'bad';
+  }
+
+  // Kolom kanan sesuai template (Heading, Description, counter, ctr)
+  const renderForms = ()=> {
+    if (!skillsForm) return;
+    if (!picked.length){
+      skillsForm.innerHTML = `<div class="text-muted small">Belum ada skill dipilih.</div>`;
+      return;
+    }
+    skillsForm.innerHTML = picked.map((p,ix)=>{
+      const n = wordCount(p.text||'');
+      return `
+        <div class="sb-card" data-ix="${ix}">
+          <label class="form-label">Heading</label>
+          <input class="form-control sb-title" value="${(p.title||'').replace(/"/g,'&quot;')}" />
+
+          <label class="form-label mt-2">Description (50–150 words)</label>
+          <textarea class="form-control sb-text" rows="4"
+            placeholder="Tulis dengan pola STAR: konteks, aksi, hasil terukur, pembelajaran kunci.">${p.text||''}</textarea>
+
+          <div class="d-flex justify-content-between align-items-center mt-1">
+            <small class="text-muted">Skill #${ix+1}</small>
+            <div class="sb-wcount ${wcClass(n)}">${n} words</div>
+          </div>
+
+          <div class="sb-ctr mt-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm sb-up">↑</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm sb-down">↓</button>
+            <button type="button" class="btn btn-outline-danger btn-sm sb-remove">Remove</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  };
+
+  /* =====================================================
+     SINKRONISASI → PAGES
+     - 4 pertama → PAGES[0] (Self Potential)
+     - Sisanya → halaman lanjutan (index 1)
+     ===================================================== */
+  function syncToPages(){
+    try{
+      const page1 = (typeof PAGES!=='undefined') ? PAGES[0] : null;
+      if(!page1 || page1.type!=='flow') return;
+
+      // Pastikan style judul & body konsisten
+      page1.boxes.forEach(b=>{
+        b.style = b.style || {};
+        if(!b.style.titleColor) b.style.titleColor = "#f6e6c5"; // heading krem
+        if(!b.style.bodyBg && typeof COLOR!=='undefined') b.style.bodyBg = COLOR.bodySelf;
+      });
+
+      // 4 pertama → page 1
+      const first4 = picked.slice(0,4);
+      for(let i=0;i<4;i++){
+        const b = page1.boxes[i];
+        const src = first4[i];
+        if(!b) continue;
+        if(src){
+          b.label = src.title;
+          b.val   = src.text||'';
+        }else{
+          b.label = `Skill ${i+1}`;
+          b.val   = '';
+        }
+      }
+
+      // Sisa → halaman lanjutan
+      const rest = picked.slice(4);
+      ensureSkillContinuationPage(rest.length>0, {...page1.flow});
+
+      if(rest.length>0){
+        const pCont = PAGES[1]; // sudah ada dari ensure*
+        pCont.bg = (FRAME && (FRAME['1_EXTRA'] || FRAME[1])) || (page1.bg || null);
+        pCont.boxes = rest.slice(0,4).map((s,idx)=>({
+          id: 'p1c'+idx,
+          label: s.title,
+          fs: 20, lh: 1.35,
+          val: s.text||'',
+          style:{
+            bodyBg: (typeof COLOR!=='undefined' ? COLOR.bodySelf : undefined),
+            titleColor: "#f6e6c5"
+          }
+        }));
+      }
+
+      // Render ulang halaman aktif (tidak memaksa pindah)
+      if (typeof renderPage === 'function' && typeof cur!=='undefined') renderPage(cur);
+    }catch(_e){
+      // swallow untuk jaga stabilitas UI
+    }
+  }
+
+  function ensureSkillContinuationPage(needed, flowSample){
+    try{
+      const exists = typeof PAGES!=='undefined' && PAGES[1] && PAGES[1].__isSkillCont;
+      if(needed && !exists){
+        PAGES.splice(1,0,{
+          __isSkillCont:true,
+          name:"Self Potential — Continued",
+          type:'flow',
+          bg: (FRAME && (FRAME['1_EXTRA'] || FRAME[1])) || null,
+          flow:{ ...flowSample, lock:true },
+          boxes:[]
+        });
+        if (typeof buildPager === 'function') buildPager();
+      } else if(!needed && exists){
+        PAGES.splice(1,1);
+        if (typeof buildPager === 'function') buildPager();
+        if (typeof cur!=='undefined' && cur===1) cur=0; // bila sedang di page lanjutan, kembali ke page 1
+      }
+    }catch(_e){ /* abaikan */ }
+  }
+
+  /* =====================================================
+     EVENTS & INIT
+     ===================================================== */
+  function boot(){
+    if (!skillsBuilder) return; // tidak ada host
+
+    // Inisialisasi UI
+    renderModelSelect();
+    renderPills();
+    renderForms();
+    syncToPages();
+
+    // Ganti model
+    modelSelect?.addEventListener('change', ()=>{
+      skillsModel = modelSelect.value;
+      picked = [];
+      renderPills(); renderForms(); syncToPages();
+    });
+
+    // Toggle pill
+    skillOptions?.addEventListener('click', (e)=>{
+      const btn = e.target.closest('.pill'); if(!btn) return;
+      const name = decodeURIComponent(btn.dataset.skill||'');
+      const ix = picked.findIndex(p=>p.title===name);
+      if(ix>=0){
+        picked.splice(ix,1);
+      }else{
+        if(picked.length>=8){ alert('Max 8 skills.'); return; }
+        picked.push({title:name, text:''});
+      }
+      renderPills(); renderForms(); syncToPages();
+    });
+
+    // Edit form (judul/narasi) + word count + naik/turun/hapus
+    skillsForm?.addEventListener('input', (e)=>{
+      const card = e.target.closest('.sb-card'); if(!card) return;
+      const ix = +card.dataset.ix;
+      if(e.target.classList.contains('sb-title')) picked[ix].title = e.target.value;
+      if(e.target.classList.contains('sb-text'))  picked[ix].text  = e.target.value;
+
+      if(e.target.classList.contains('sb-text')){
+        const n = (e.target.value||'').trim().split(/\s+/).filter(Boolean).length;
+        const wc = card.querySelector('.sb-wcount');
+        if (wc){
+          wc.textContent = `${n} words`;
+          wc.className = 'sb-wcount ' + (n===0?'': (n<50?'bad': n<=150?'ok': n<=200?'warn':'bad'));
+        }
+      }
+      syncToPages();
+    });
+
+    skillsForm?.addEventListener('click', (e)=>{
+      const card = e.target.closest('.sb-card'); if(!card) return;
+      const ix = +card.dataset.ix;
+
+      if(e.target.classList.contains('sb-remove')){
+        picked.splice(ix,1);
+        renderPills(); renderForms(); syncToPages();
+        return;
+      }
+      if(e.target.classList.contains('sb-up') && ix>0){
+        [picked[ix-1], picked[ix]] = [picked[ix], picked[ix-1]];
+        renderPills(); renderForms(); syncToPages();
+        return;
+      }
+      if(e.target.classList.contains('sb-down') && ix<picked.length-1){
+        [picked[ix+1], picked[ix]] = [picked[ix], picked[ix+1]];
+        renderPills(); renderForms(); syncToPages();
+        return;
+      }
+    });
+  }
+
+  // Mulai
+  boot();
+})();
