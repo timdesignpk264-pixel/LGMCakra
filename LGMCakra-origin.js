@@ -492,7 +492,7 @@ window.addEventListener('DOMContentLoaded', ()=>{
     ],
     "Corporate – Katz": [
       "Strategic Thinking","Results Orientation","Stakeholder Influence","Team Leadership & Coaching",
-      "Customer Focus","Change Management","Emotional Intelligence, Technical (Hard) Skills","Human (Interpersonal) Skills","Conceptual (Big-Picture) Skills"
+      "Customer Focus","Change Management","Emotional Intelligence", "Technical (Hard) Skills","Human (Interpersonal) Skills","Conceptual (Big-Picture) Skills"
     ],
    
   };
@@ -778,4 +778,5 @@ window.addEventListener('DOMContentLoaded', ()=>{
   // Mulai
   boot();
 })();
+
 
