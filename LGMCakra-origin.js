@@ -1,6 +1,6 @@
 /* =========================================================
    LGMCakra — Editor 7 Halaman (Final, BG Terkunci PNG)
-   (Revisi: Skills Builder hanya di Page 1, copywriting UI)
+   (Revisi: Form standar (Heading, Description, Remove) + SB dimatikan)
    ========================================================= */
 "use strict";
 
@@ -14,7 +14,7 @@ const pager   = document.getElementById('pager');
 const btnPrev = document.getElementById('prev');
 const btnNext = document.getElementById('next');
 
-/* Kontrol FLOW (muncul hanya saat flow tidak dikunci) */
+/* ---------- Kontrol FLOW (muncul hanya saat flow tidak dikunci) ---------- */
 const flowCtr = {
   wrap:  document.getElementById('flowControls'),
   cols:  document.getElementById('fc_cols'),
@@ -69,20 +69,32 @@ const FRAME = {
    - Halaman 4–6: ABS (x,y,w)
    - Halaman 7: Cover (tanpa box)
 ---------------------------------------------------------*/
+/* ---------- PAGES: Setting lokasi per halaman ---------- */
 const PAGES = [
   /* 1) SELF POTENTIAL — flow 1 kolom (manual, locked) */
-  { name:"Self Potential & Development Identification", type:'flow', bg: FRAME[1],
-    flow:{
-      cols:1, gapPct:1, leftPct:5.5, topPct:23, widthPct:89.5, padXPct:0, padYPct:0,
-      lock:true, anchor:{ mode:'manual' }
+  {
+    name: "Self Potential & Development Identification",
+    type: 'flow',
+    bg: FRAME[1],
+    flow: {
+      cols: 1,
+      gapPct: 1,
+      leftPct: 5.5,
+      topPct: 23,
+      widthPct: 89.5,
+      padXPct: 0,
+      padYPct: 0,
+      lock: true,
+      anchor: { mode: 'manual' }
     },
-    boxes:[
-      { id:"p1a", label:"Skill 1", fs:20, lh:1.35, val:"", style:{ bodyBg: COLOR.bodySelf } },
-      { id:"p1b", label:"Skill 2", fs:20, lh:1.35, val:"", style:{ bodyBg: COLOR.bodySelf } },
-      { id:"p1c", label:"Skill 3", fs:20, lh:1.35, val:"", style:{ bodyBg: COLOR.bodySelf } },
-      { id:"p1d", label:"Skill 4", fs:20, lh:1.35, val:"", style:{ bodyBg: COLOR.bodySelf } },
+    boxes: [
+      { id: "p1a", label: "Skill 1", fs: 20, lh: 1.35, style: { bodyBg: COLOR.bodySelf, titleColor: "#f6e6c5" } },
+      { id: "p1b", label: "Skill 2", fs: 20, lh: 1.35, style: { bodyBg: COLOR.bodySelf, titleColor: "#f6e6c5" } },
+      { id: "p1c", label: "Skill 3", fs: 20, lh: 1.35, style: { bodyBg: COLOR.bodySelf, titleColor: "#f6e6c5" } },
+      { id: "p1d", label: "Skill 4", fs: 20, lh: 1.35, style: { bodyBg: COLOR.bodySelf, titleColor: "#f6e6c5" } },
     ]
   },
+
 
   /* 2) STUDY PLAN (1–4) — flow 2 kolom (manual, locked) */
   { name:"Study Plan & Academic Achievement (1–4)", type:'flow', bg: FRAME[2],
@@ -158,9 +170,8 @@ const PAGES = [
 
 /* ---------- Instruksi per halaman (copywriting) ---------- */
 const PAGE_INSTR = [
-  "Langkah 1 dari 7: Identifikasi & Deskripsi Potensi Diri. Pilih hingga 8 keahlian pada daftar. Isi deskripsi tiap keahlian. Sistem otomatis membuat halaman lanjutan jika Anda memilih lebih dari 4 keahlian.",
-  "Langkah 1 dari 7 (Lanjutan): Silakan lanjutkan untuk mengisi deskripsi keahlian berikutnya.",
-  "Langkah 2 dari 7: Rencana Studi & Akademik (S2). Uraikan rencana studi dan target akademik untuk empat semester pertama.",
+  "Langkah 1 dari 7: Identifikasi & Deskripsi Potensi Diri. Isi Heading (judul) dan Description pada setiap box.",
+    "Langkah 2 dari 7: Rencana Studi & Akademik (S2). Uraikan rencana studi dan target akademik untuk empat semester pertama.",
   "Langkah 3 dari 7: Rencana Studi & Akademik (S3). Lanjutkan pemaparan untuk empat semester terakhir.",
   "Langkah 4 dari 7: Peta Jalan Hidup (Jangka Menengah). Tuliskan visi & rencana konkret 5–10 tahun ke depan.",
   "Langkah 5 dari 7: Peta Jalan Hidup (Jangka Panjang). Proyeksikan impian dan rencana besar 10 tahun ke atas.",
@@ -181,11 +192,78 @@ function buildPager(){
   if (totalPg) totalPg.textContent = PAGES.length;
 }
 
-/* ---------- Show/Hide Skills Builder hanya di Halaman 1 ---------- */
-function toggleSkillsBuilder(pageIndex){
+/* ---------- Show/Hide Skills Builder: selalu sembunyikan ---------- */
+function toggleSkillsBuilder(_pageIndex){
   const sb = document.getElementById('skillsBuilder');
   if (!sb) return;
-  sb.classList.toggle('d-none', pageIndex !== 0); // tampil hanya index 0
+  sb.classList.add('d-none'); // paksa hidden → SB dimatikan
+}
+
+/* ---------- Form Standar (Heading + Description + Remove) ---------- */
+function updateWordCount(id, text){
+  const el = document.getElementById('wc_'+id);
+  if (!el) return;
+  const n = (text||'').trim().split(/\s+/).filter(Boolean).length;
+  el.textContent = `${n} words`;
+}
+
+function removeBox(pageIndex, boxIndex){
+  const pg = PAGES[pageIndex];
+  if (!pg || !Array.isArray(pg.boxes)) return;
+  pg.boxes.splice(boxIndex, 1);
+  renderPage(pageIndex);
+}
+
+function makeStdFormGroup(pageIndex, boxIndex, boxDef){
+  const grp = document.createElement('div');
+  grp.className = 'mb-3';
+
+  const idTitle = `ttl_${boxDef.id}`;
+  const idText  = `in_${boxDef.id}`;
+
+  grp.innerHTML = `
+    <label class="form-label">Heading</label>
+    <input id="${idTitle}" class="form-control" type="text" value="${(boxDef.label||'').replace(/"/g,'&quot;')}"/>
+
+    <label class="form-label mt-2">Description</label>
+    <textarea id="${idText}" class="form-control" rows="4" placeholder="Tulis konten..."></textarea>
+
+    <div class="d-flex justify-content-between align-items-center mt-2">
+      <small class="mini" id="wc_${boxDef.id}"></small>
+      <button type="button" class="btn btn-outline-danger btn-sm" data-remove="${boxIndex}">Remove</button>
+    </div>
+  `;
+
+  // Set nilai awal textarea + auto-resize + word count awal
+  const ta = grp.querySelector(`#${CSS.escape(idText)}`);
+  ta.value = boxDef.val || '';
+  autoSizeTA(ta);
+  updateWordCount(boxDef.id, boxDef.val||'');
+
+  // Sinkron Description → preview
+  ta.addEventListener('input', e=>{
+    boxDef.val = e.target.value;
+    const outEl = document.getElementById('out_'+boxDef.id);
+    if(outEl) outEl.textContent = boxDef.val;
+    autoSizeTA(e.target);
+    updateWordCount(boxDef.id, boxDef.val);
+  });
+
+  // Sinkron Heading → title preview
+  const inpTitle = grp.querySelector(`#${CSS.escape(idTitle)}`);
+  inpTitle.addEventListener('input', e=>{
+    boxDef.label = e.target.value;
+    const titleEl = document.getElementById('title_'+boxDef.id);
+    if (titleEl) titleEl.textContent = boxDef.label || '';
+  });
+
+  // Tombol Remove
+  const btnRemove = grp.querySelector('[data-remove]');
+  btnRemove.addEventListener('click', ()=>{
+    removeBox(pageIndex, boxIndex);
+  });
+
+  return grp;
 }
 
 /* ---------- Render ---------- */
@@ -231,6 +309,7 @@ function renderPage(i){
 
       const title = document.createElement('div');
       title.className='box-title';
+      title.id = 'title_' + b.id;
       title.textContent = b.label;
 
       const out = document.createElement('div');
@@ -241,24 +320,9 @@ function renderPage(i){
       el.append(title, out);
       stage.appendChild(el);
 
-      // input kiri
-      const grp=document.createElement('div');
-      grp.className='mb-3';
-      grp.innerHTML = `
-        <label class="form-label">${b.label}</label>
-        <textarea id="in_${b.id}" class="form-control" rows="4" placeholder="Tulis konten..."></textarea>
-        <div class="mini">x:${b.x}, y:${b.y}, w:${b.w}, fs:${b.fs}</div>`;
+      // input kiri (standar)
+      const grp = makeStdFormGroup(i, PAGES[i].boxes.indexOf(b), b);
       inputs.appendChild(grp);
-
-      const ta = grp.querySelector('textarea');
-      ta.value = b.val || '';
-      autoSizeTA(ta);
-      ta.addEventListener('input', e=>{
-        b.val = e.target.value;
-        const outEl = document.getElementById('out_'+b.id);
-        if(outEl) outEl.textContent = b.val;
-        autoSizeTA(e.target);
-      });
     });
 
   } else {
@@ -273,7 +337,7 @@ function renderPage(i){
     flowCtr.cols.value=f.cols; flowCtr.gap.value=f.gapPct; flowCtr.left.value=f.leftPct;
     flowCtr.top.value=f.topPct; flowCtr.width.value=f.widthPct; flowCtr.padx.value=f.padXPct; flowCtr.pady.value=f.padYPct;
 
-    // anchor first-box-xy akan menonaktifkan left/top (di sini kita manual semua, jadi tidak aktif)
+    // anchor first-box-xy akan menonaktifkan left/top (di sini manual)
     flowCtr.left.disabled = !!(f.anchor && f.anchor.mode==='first-box-xy');
     flowCtr.top.disabled  = !!(f.anchor && f.anchor.mode==='first-box-xy');
 
@@ -320,6 +384,7 @@ function renderPage(i){
 
       const title = document.createElement('div');
       title.className='box-title';
+      title.id = 'title_' + b.id;
       title.textContent = b.label;
 
       const out = document.createElement('div');
@@ -330,22 +395,9 @@ function renderPage(i){
       card.append(title, out);
       wrap.appendChild(card);
 
-      // input kiri
-      const grp=document.createElement('div');
-      grp.className='mb-3';
-      grp.innerHTML=`<label class="form-label">${b.label}</label>
-        <textarea id="in_${b.id}" class="form-control" rows="4" placeholder="Tulis konten..."></textarea>`;
+      // input kiri (standar)
+      const grp = makeStdFormGroup(i, PAGES[i].boxes.indexOf(b), b);
       inputs.appendChild(grp);
-
-      const ta=grp.querySelector('textarea');
-      ta.value = b.val || '';
-      autoSizeTA(ta);
-      ta.addEventListener('input', e=>{
-        b.val=e.target.value;
-        const outEl = document.getElementById('out_'+b.id);
-        if(outEl) outEl.textContent = b.val;
-        autoSizeTA(e.target);
-      });
     });
 
     stage.appendChild(wrap);
@@ -357,7 +409,7 @@ function renderPage(i){
     a.classList.toggle('text-white', ix===i);
   });
 
-  // tampilkan/ sembunyikan Skills Builder
+  // paksa sembunyikan Skills Builder
   toggleSkillsBuilder(i);
 }
 
@@ -382,7 +434,7 @@ const rerender = () => { clearTimeout(reT); reT = setTimeout(()=>renderPage(cur)
 });
 
 /* ---------- LocalStorage ---------- */
-const KEY='seven_pages_editor_final_lockedbg_v4'; // bump versi
+const KEY='seven_pages_editor_final_lockedbg_v5_formstd_sb_off';
 
 document.getElementById('save').onclick = ()=>{
   const data = PAGES.map(p => {
@@ -470,12 +522,14 @@ window.addEventListener('DOMContentLoaded', ()=>{
 });
 
 /* =====================================================================
-   Skills Builder — Halaman 1 (Self Potential) — Drop-in Module
-   - Membangun UI secara otomatis di panel kiri (HTML sudah menyediakan host)
-   - Pilih model → pilih hingga 8 skill → tulis narasi tiap skill
-   - 4 pertama → Page 1; sisanya → disisipkan jadi "Self Potential — Continued"
+   Skills Builder — Halaman 1 (Self Potential) — Drop-in Module (DINONAKTIFKAN)
+   - Bagian ini dipertahankan sesuai permintaan, namun tidak dieksekusi
+     karena guarded dengan `if (!ENABLE_SB) return;`
    ===================================================================== */
 (function(){
+  const ENABLE_SB = false;           // guard lokal (tetap nonaktif)
+  if (!ENABLE_SB) return;
+
   /* ---------- Library Model → Skill list ---------- */
   const SKILL_LIBRARY = {
     "WEF – Future Skills": [
@@ -493,8 +547,7 @@ window.addEventListener('DOMContentLoaded', ()=>{
     "Corporate – Katz": [
       "Strategic Thinking","Results Orientation","Stakeholder Influence","Team Leadership & Coaching",
       "Customer Focus","Change Management","Emotional Intelligence", "Technical (Hard) Skills","Human (Interpersonal) Skills","Conceptual (Big-Picture) Skills"
-    ],
-   
+    ]
   };
 
   /* ---------- State ---------- */
@@ -625,8 +678,6 @@ window.addEventListener('DOMContentLoaded', ()=>{
 
   /* =====================================================
      SINKRONISASI → PAGES
-     - 4 pertama → PAGES[0] (Self Potential)
-     - Sisanya → halaman lanjutan (index 1)
      ===================================================== */
   function syncToPages(){
     try{
@@ -636,7 +687,7 @@ window.addEventListener('DOMContentLoaded', ()=>{
       // Pastikan style judul & body konsisten
       page1.boxes.forEach(b=>{
         b.style = b.style || {};
-        if(!b.style.titleColor) b.style.titleColor = "#f6e6c5"; // heading krem
+        if(!b.style.titleColor) b.style.titleColor = "#f6e6c5";
         if(!b.style.bodyBg && typeof COLOR!=='undefined') b.style.bodyBg = COLOR.bodySelf;
       });
 
@@ -660,7 +711,7 @@ window.addEventListener('DOMContentLoaded', ()=>{
       ensureSkillContinuationPage(rest.length>0, {...page1.flow});
 
       if(rest.length>0){
-        const pCont = PAGES[1]; // sudah ada dari ensure*
+        const pCont = PAGES[1];
         pCont.bg = (FRAME && (FRAME['1_EXTRA'] || FRAME[1])) || (page1.bg || null);
         pCont.boxes = rest.slice(0,4).map((s,idx)=>({
           id: 'p1c'+idx,
@@ -674,11 +725,8 @@ window.addEventListener('DOMContentLoaded', ()=>{
         }));
       }
 
-      // Render ulang halaman aktif (tidak memaksa pindah)
       if (typeof renderPage === 'function' && typeof cur!=='undefined') renderPage(cur);
-    }catch(_e){
-      // swallow untuk jaga stabilitas UI
-    }
+    }catch(_e){}
   }
 
   function ensureSkillContinuationPage(needed, flowSample){
@@ -697,31 +745,28 @@ window.addEventListener('DOMContentLoaded', ()=>{
       } else if(!needed && exists){
         PAGES.splice(1,1);
         if (typeof buildPager === 'function') buildPager();
-        if (typeof cur!=='undefined' && cur===1) cur=0; // bila sedang di page lanjutan, kembali ke page 1
+        if (typeof cur!=='undefined' && cur===1) cur=0;
       }
-    }catch(_e){ /* abaikan */ }
+    }catch(_e){}
   }
 
   /* =====================================================
      EVENTS & INIT
      ===================================================== */
   function boot(){
-    if (!skillsBuilder) return; // tidak ada host
+    if (!skillsBuilder) return;
 
-    // Inisialisasi UI
     renderModelSelect();
     renderPills();
     renderForms();
     syncToPages();
 
-    // Ganti model
     modelSelect?.addEventListener('change', ()=>{
       skillsModel = modelSelect.value;
       picked = [];
       renderPills(); renderForms(); syncToPages();
     });
 
-    // Toggle pill
     skillOptions?.addEventListener('click', (e)=>{
       const btn = e.target.closest('.pill'); if(!btn) return;
       const name = decodeURIComponent(btn.dataset.skill||'');
@@ -735,7 +780,6 @@ window.addEventListener('DOMContentLoaded', ()=>{
       renderPills(); renderForms(); syncToPages();
     });
 
-    // Edit form (judul/narasi) + word count + naik/turun/hapus
     skillsForm?.addEventListener('input', (e)=>{
       const card = e.target.closest('.sb-card'); if(!card) return;
       const ix = +card.dataset.ix;
@@ -778,5 +822,3 @@ window.addEventListener('DOMContentLoaded', ()=>{
   // Mulai
   boot();
 })();
-
-
