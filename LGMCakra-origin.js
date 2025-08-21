@@ -490,13 +490,11 @@ window.addEventListener('DOMContentLoaded', ()=>{
       "Literacy & Multilingual","Digital Competence","Personal & Social Learning","Civic Competence",
       "Entrepreneurship Competence","Cultural Awareness & Expression","STEM Competence"
     ],
-    "Corporate – Classic": [
+    "Corporate – Katz": [
       "Strategic Thinking","Results Orientation","Stakeholder Influence","Team Leadership & Coaching",
-      "Customer Focus","Change Management","Emotional Intelligence"
+      "Customer Focus","Change Management","Emotional Intelligence, Technical (Hard) Skills","Human (Interpersonal) Skills","Conceptual (Big-Picture) Skills"
     ],
-    "Katz – Skills Trilogy": [
-      "Technical (Hard) Skills","Human (Interpersonal) Skills","Conceptual (Big-Picture) Skills"
-    ]
+   
   };
 
   /* ---------- State ---------- */
@@ -780,3 +778,4 @@ window.addEventListener('DOMContentLoaded', ()=>{
   // Mulai
   boot();
 })();
+
